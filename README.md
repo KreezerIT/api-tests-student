@@ -1,3 +1,7 @@
+В [ПР'е](https://github.com/KreezerIT/api-tests-student/pull/1) описал TL;DR решения и приложил кусочек логов
+
+---
+
 # API-тесты для проекта https://testboard.avito.com/
 
 ## Полезные ссылки
