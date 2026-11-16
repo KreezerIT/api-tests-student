@@ -3,6 +3,7 @@ package auth
 import (
 	"encoding/json"
 	"io"
+	"net/http"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -26,6 +27,7 @@ func Login(t *testing.T, username, password string) models.LoginOkResponse {
 
 	respArray, errResponse := io.ReadAll(loginRawResponse.Body)
 	require.NoError(t, errResponse)
+	require.Equalf(t, http.StatusOK, loginRawResponse.StatusCode, "ошибка авторизации: HTTP %d, ответ: %s", loginRawResponse.StatusCode, respArray)
 
 	loginResponse := models.LoginOkResponse{}
 	err := json.Unmarshal(respArray, &loginResponse)

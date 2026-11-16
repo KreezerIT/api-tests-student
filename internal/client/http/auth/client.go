@@ -16,6 +16,5 @@ func HttpPostAuthLogin(t *testing.T, request authModels.LoginRequest) *http.Resp
 		ContentType("application/json").
 		JSON(request).
 		Expect(t).
-		Status(http.StatusOK).
 		End().Response
 }
