@@ -1,5 +1,5 @@
-В [ПР'е](https://github.com/KreezerIT/api-tests-student/pull/1) описал TL;DR решения и приложил кусочек логов
-
+- [ПР-1](https://github.com/KreezerIT/api-tests-student/pull/1) с API тестами поиска (практика) - описал TL;DR решения и приложил кусочек логов
+- [ПР-2](https://github.com/KreezerIT/api-tests-student/pull/2) с API тестами лабораторной №3 - описал TL;DR решения, перечислил тест-кейсы и добавил `docs/test-results.jsonl` с результатом прогона тестов
 ---
 
 # API-тесты для проекта https://testboard.avito.com/
