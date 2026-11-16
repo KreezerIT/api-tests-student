@@ -6,13 +6,32 @@ import (
 	"net/url"
 	"os"
 	"path"
+	"sync"
+	"time"
 
 	"github.com/steinfletcher/apitest"
 )
 
 const (
 	defaultUserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36"
+	requestInterval  = 300 * time.Millisecond
 )
+
+var requests requestPacer
+
+type requestPacer struct {
+	mu          sync.Mutex
+	lastRequest time.Time
+}
+
+// wait выдерживает паузу между запросами всех клиентов в процессе
+func (p *requestPacer) wait() {
+	p.mu.Lock()
+	defer p.mu.Unlock()
+
+	time.Sleep(time.Until(p.lastRequest.Add(requestInterval)))
+	p.lastRequest = time.Now()
+}
 
 type ApiTest struct {
 	token     string
@@ -53,6 +72,8 @@ func (at *ApiTest) Create() *apitest.APITest {
 			if len(at.token) != 0 {
 				request.Header.Add("Authorization", "Bearer "+at.token)
 			}
+
+			requests.wait()
 		})
 }
 
