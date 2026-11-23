@@ -24,5 +24,5 @@ func assertFavorite(t *testing.T, token, title, id string, present bool) {
 	if present {
 		expectedCount = 1
 	}
-	require.Equal(t, expectedCount, count, "неверное количество записей объявления %s в избранном", id)
+	require.Equal(t, expectedCount, count, "проверка списка избранного по title=%q: неверное количество элементов items с advertisement.id=%s", title, id)
 }

@@ -13,7 +13,7 @@ import (
 func TestFavoriteDuplicate(t *testing.T) {
 	user := fixtures.Login(t, "TEST_LOGIN", "TEST_PASSWORD")
 	owner := fixtures.Login(t, "FAVORITES_OWNER_LOGIN", "FAVORITES_OWNER_PASSWORD")
-	require.NotEqual(t, user.User.Id, owner.User.Id, "для избранного нужен другой владелец")
+	require.NotEqual(t, user.User.Id, owner.User.Id, "подготовка избранного: user.id покупателя и владельца объявления должны различаться")
 
 	cases := []struct {
 		name               string
@@ -31,10 +31,10 @@ func TestFavoriteDuplicate(t *testing.T) {
 			board.AddFavorite(t, user.Token, ad.ID, http.StatusCreated)
 			for i := 0; i < tc.previousDuplicates; i++ {
 				actual := board.AddFavorite(t, user.Token, ad.ID, http.StatusConflict)
-				require.Equal(t, tc.expected, actual)
+				require.Equal(t, tc.expected, actual, "повторное добавление объявления %s: поля error и message должны сообщать, что оно уже в избранном", ad.ID)
 			}
 			actual := board.AddFavorite(t, user.Token, ad.ID, http.StatusConflict)
-			require.Equal(t, tc.expected, actual)
+			require.Equal(t, tc.expected, actual, "повторное добавление объявления %s: поля error и message должны сообщать, что оно уже в избранном", ad.ID)
 			assertFavorite(t, user.Token, fields["title"], ad.ID, true)
 		})
 	}

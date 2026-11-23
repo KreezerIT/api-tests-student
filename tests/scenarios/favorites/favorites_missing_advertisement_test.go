@@ -25,7 +25,8 @@ func TestFavoritesMissingAdvertisement(t *testing.T) {
 	}
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
-			require.Equal(t, board.APIError{Error: "not_found", Message: tc.message}, tc.request(t))
+			require.Equal(t, board.APIError{Error: "not_found", Message: tc.message}, tc.request(t),
+				"%s избранного с несуществующим ID %s: поля error и message должны описывать отсутствие записи", tc.name, missingID)
 		})
 	}
 }

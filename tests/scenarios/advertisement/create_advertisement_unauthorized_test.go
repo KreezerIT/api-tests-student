@@ -20,7 +20,8 @@ func TestCreateAdvertisementUnauthorized(t *testing.T) {
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
 			actual := board.CreateError(t, tc.token, fixtures.Fields(), fixtures.PhotoPath(), http.StatusUnauthorized)
-			require.Equal(t, board.APIError{Error: "unauthorized", Message: tc.message}, actual)
+			require.Equal(t, board.APIError{Error: "unauthorized", Message: tc.message}, actual,
+				"создание объявления без авторизации (%s): поля error и message должны описывать ошибку токена", tc.name)
 		})
 	}
 }

@@ -12,13 +12,13 @@ import (
 // readResponse проверяет статус и разбирает JSON-ответ
 func readResponse(t *testing.T, response *http.Response, status int, out any) {
 	t.Helper()
-	require.NotNil(t, response, "сервер не вернул HTTP-ответ")
+	require.NotNil(t, response, "получение HTTP-ответа: сервер не вернул ответ для проверки статуса %d", status)
 	defer response.Body.Close()
 	body, err := io.ReadAll(response.Body)
-	require.NoError(t, err, "не удалось прочитать ответ")
-	require.Equalf(t, status, response.StatusCode, "неожиданный HTTP-статус; ответ: %s", body)
+	require.NoError(t, err, "чтение HTTP-ответа: не удалось прочитать тело ответа со статусом %d", response.StatusCode)
+	require.Equalf(t, status, response.StatusCode, "проверка HTTP-ответа: неожиданный статус; тело ответа: %s", body)
 	if out != nil {
-		require.NoErrorf(t, json.Unmarshal(body, out), "некорректный JSON: %s", body)
+		require.NoErrorf(t, json.Unmarshal(body, out), "разбор HTTP-ответа со статусом %d: тело должно быть корректным JSON; ответ: %s", status, body)
 	}
 }
 
@@ -27,8 +27,8 @@ func assertError(t *testing.T, response *http.Response, status int) APIError {
 	t.Helper()
 	var apiError APIError
 	readResponse(t, response, status, &apiError)
-	require.NotEmpty(t, apiError.Error, "в ответе отсутствует код ошибки")
-	require.NotEmpty(t, apiError.Message, "в ответе отсутствует сообщение об ошибке")
+	require.NotEmpty(t, apiError.Error, "проверка ошибки API с HTTP %d: поле error должно содержать код ошибки", status)
+	require.NotEmpty(t, apiError.Message, "проверка ошибки API с HTTP %d: поле message должно содержать описание ошибки", status)
 	t.Logf("Ошибка API: %s: %s", apiError.Error, apiError.Message)
 	return apiError
 }
@@ -39,7 +39,7 @@ func assertCreateError(t *testing.T, response *http.Response, ownerToken string,
 	if response != nil && response.StatusCode == http.StatusCreated {
 		var ad Advertisement
 		readResponse(t, response, http.StatusCreated, &ad)
-		require.NotEmpty(t, ad.ID, "ошибочно созданное объявление не содержит ID")
+		require.NotEmpty(t, ad.ID, "подготовка очистки после ошибочного создания: в ответе POST /advertisement отсутствует id")
 		t.Cleanup(func() { CleanupAdvertisement(t, ownerToken, ad.ID) })
 		t.Fatalf("ошибочно создано объявление %s вместо отказа с HTTP %d", ad.ID, status)
 	}

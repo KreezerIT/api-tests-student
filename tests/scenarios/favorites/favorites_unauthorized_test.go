@@ -24,7 +24,8 @@ func TestFavoritesUnauthorized(t *testing.T) {
 	} {
 		t.Run(tc.name, func(t *testing.T) {
 			apiError := tc.request(t)
-			require.Equal(t, board.APIError{Error: "unauthorized", Message: "Authorization header required"}, apiError)
+			require.Equal(t, board.APIError{Error: "unauthorized", Message: "Authorization header required"}, apiError,
+				"операция %s с избранным без токена: поля error и message должны сообщать об отсутствии авторизации", tc.name)
 		})
 	}
 }

@@ -13,7 +13,7 @@ import (
 func TestFavoritesLifecycle(t *testing.T) {
 	user := fixtures.Login(t, "TEST_LOGIN", "TEST_PASSWORD")
 	owner := fixtures.Login(t, "FAVORITES_OWNER_LOGIN", "FAVORITES_OWNER_PASSWORD")
-	require.NotEqual(t, user.User.Id, owner.User.Id, "для избранного нужен другой владелец")
+	require.NotEqual(t, user.User.Id, owner.User.Id, "подготовка избранного: user.id покупателя и владельца объявления должны различаться")
 
 	cases := []struct {
 		name            string
