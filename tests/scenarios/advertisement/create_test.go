@@ -40,8 +40,8 @@ func TestCreateAdvertisement(t *testing.T) {
 				}, expectedAdvertisement{
 					ID: ad.ID, UserID: ad.UserID, Title: ad.Title,
 					Description: ad.Description, Price: ad.Price, Quantity: ad.Quantity,
-				})
-			}))
+				}, "получение объявления %s: поля id, user_id, title, description, price и quantity должны совпадать с данными создания", created.ID)
+			}), "проверка объявления %s по ID должна пройти до проверки его фотографий", created.ID)
 
 			t.Run("объявление находится по полному названию", func(t *testing.T) {
 				results := board.SearchAdvertisements(t, fields["title"])
@@ -49,16 +49,16 @@ func TestCreateAdvertisement(t *testing.T) {
 				for _, item := range results.Items {
 					ids = append(ids, item.ID)
 				}
-				require.Contains(t, ids, created.ID, "созданное объявление отсутствует в поиске")
+				require.Contains(t, ids, created.ID, "поиск по title=%q: в items отсутствует созданное объявление %s", fields["title"], created.ID)
 			})
 
 			t.Run("загруженная фотография доступна по API", func(t *testing.T) {
 				photos := board.GetPhotos(t, user.Token, created.ID)
-				require.Len(t, photos, 1)
-				require.NotEmpty(t, photos[0].ID)
-				require.NotEmpty(t, photos[0].URL)
-				require.Len(t, ad.Photos, 1)
-				require.Equal(t, ad.Photos[0].ID, photos[0].ID)
+				require.Len(t, photos, 1, "получение фотографий объявления %s: ожидается одна загруженная фотография", created.ID)
+				require.NotEmpty(t, photos[0].ID, "получение фотографий объявления %s: поле id первой фотографии пустое", created.ID)
+				require.NotEmpty(t, photos[0].URL, "получение фотографий объявления %s: поле url первой фотографии пустое", created.ID)
+				require.Len(t, ad.Photos, 1, "получение объявления %s по ID: поле photos должно содержать одну фотографию", created.ID)
+				require.Equal(t, ad.Photos[0].ID, photos[0].ID, "сверка фотографий объявления %s: id фотографии в карточке и списке фотографий должны совпадать", created.ID)
 			})
 		})
 	}

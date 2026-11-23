@@ -35,7 +35,8 @@ func TestRequestPacer(t *testing.T) {
 			}
 
 			for i := range cap(sent) {
-				require.GreaterOrEqual(t, (<-sent).Sub(started), time.Duration(i)*requestInterval)
+				require.GreaterOrEqual(t, (<-sent).Sub(started), time.Duration(i)*requestInterval,
+					"ограничение частоты запросов: запрос №%d отправлен раньше разрешённого времени", i+1)
 			}
 		})
 	}

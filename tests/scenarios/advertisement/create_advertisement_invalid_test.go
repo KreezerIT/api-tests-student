@@ -34,7 +34,8 @@ func TestCreateAdvertisementInvalid(t *testing.T) {
 			}
 			t.Log("Отправляем некорректные данные и проверяем ошибку")
 			apiError := board.CreateError(t, user.Token, fields, photo, http.StatusBadRequest)
-			require.Equal(t, board.APIError{Error: "invalid_request", Message: tc.message}, apiError)
+			require.Equal(t, board.APIError{Error: "invalid_request", Message: tc.message}, apiError,
+				"создание с некорректными данными (%s): поля error и message должны описывать причину отказа", tc.name)
 		})
 	}
 }

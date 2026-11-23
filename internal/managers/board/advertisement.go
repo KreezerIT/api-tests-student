@@ -61,6 +61,6 @@ func CreateWithoutCleanup(t *testing.T, token string, fields map[string]string, 
 	t.Helper()
 	var ad Advertisement
 	readResponse(t, client.CreateAdvertisement(t, token, fields, photo), http.StatusCreated, &ad)
-	require.NotEmpty(t, ad.ID, "сервер не вернул ID объявления")
+	require.NotEmpty(t, ad.ID, "создание объявления: в ответе POST /advertisement отсутствует id для дальнейших проверок и очистки")
 	return ad
 }

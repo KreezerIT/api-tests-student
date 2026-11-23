@@ -51,7 +51,7 @@ func (s *TestSuite) TestGetMyAdvertisementsPositive() {
 	var items gjson.Result
 	if !s.Run("Проверяем, что список объявлений не пуст", func() {
 		items = gjson.Get(advertisementsBody, "items")
-		require.NotEmpty(s.T(), items.Array())
+		require.NotEmpty(s.T(), items.Array(), "получение собственных объявлений после создания %s: поле items должно быть непустым", advertisementID)
 	}) {
 		return
 	}
@@ -63,16 +63,16 @@ func (s *TestSuite) TestGetMyAdvertisementsPositive() {
 				continue
 			}
 			found = true
-			require.Equal(s.T(), s.loginData.User.Id, gjson.Get(item.String(), "user_id").String(), "user_id не совпадает")
+			require.Equal(s.T(), s.loginData.User.Id, gjson.Get(item.String(), "user_id").String(), "получение собственного объявления %s: поле user_id должно совпадать с ID авторизованного пользователя", advertisementID)
 
-			require.NotEmpty(s.T(), gjson.Get(item.String(), "id").String(), "id пустое")
-			require.NotEmpty(s.T(), gjson.Get(item.String(), "created_at").String(), "created_at пустое")
-			require.NotEmpty(s.T(), gjson.Get(item.String(), "updated_at").String(), "updated_at пустое")
-			require.NotEmpty(s.T(), gjson.Get(item.String(), "title").String(), "Название пустое")
-			require.NotEmpty(s.T(), gjson.Get(item.String(), "description").String(), "Описание пустое")
-			require.True(s.T(), len(gjson.Get(item.String(), "photos").Array()) > 0, "Присутствуют пустые фотографии")
+			require.NotEmpty(s.T(), gjson.Get(item.String(), "id").String(), "получение собственного объявления: поле id не должно быть пустым")
+			require.NotEmpty(s.T(), gjson.Get(item.String(), "created_at").String(), "получение собственного объявления %s: поле created_at не должно быть пустым", advertisementID)
+			require.NotEmpty(s.T(), gjson.Get(item.String(), "updated_at").String(), "получение собственного объявления %s: поле updated_at не должно быть пустым", advertisementID)
+			require.NotEmpty(s.T(), gjson.Get(item.String(), "title").String(), "получение собственного объявления %s: поле title не должно быть пустым", advertisementID)
+			require.NotEmpty(s.T(), gjson.Get(item.String(), "description").String(), "получение собственного объявления %s: поле description не должно быть пустым", advertisementID)
+			require.NotEmpty(s.T(), gjson.Get(item.String(), "photos").Array(), "получение собственного объявления %s: поле photos должно содержать загруженную фотографию", advertisementID)
 		}
-		require.True(s.T(), found, "Созданное объявление не найдено в списке")
+		require.True(s.T(), found, "получение собственных объявлений: в items не найдена запись с id=%s", advertisementID)
 	})
 }
 
@@ -89,7 +89,8 @@ func (s *TestSuite) TestGetMyAdvertisementsUnauthorized() {
 			actual := struct{ Error, Message string }{
 				Error: gjson.Get(body, "error").String(), Message: gjson.Get(body, "message").String(),
 			}
-			require.Equal(s.T(), struct{ Error, Message string }{Error: "unauthorized", Message: tc.message}, actual)
+			require.Equal(s.T(), struct{ Error, Message string }{Error: "unauthorized", Message: tc.message}, actual,
+				"получение собственных объявлений без авторизации (%s): поля error и message должны описывать ошибку токена", tc.name)
 		})
 	}
 }

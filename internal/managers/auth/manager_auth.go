@@ -14,8 +14,9 @@ import (
 
 // Login выполняет авторизацию пользователя и возвращает токен с данными пользователя, ожидает 200
 func Login(t *testing.T, username, password string) models.LoginOkResponse {
-	require.NotEmpty(t, username, "Отсутствует логин пользователя")
-	require.NotEmpty(t, password, "Отсутствует пароль пользователя")
+	t.Helper()
+	require.NotEmpty(t, username, "подготовка авторизации: поле email не задано")
+	require.NotEmpty(t, password, "подготовка авторизации: поле password не задано")
 
 	request := models.LoginRequest{
 		Email:    username,
@@ -26,12 +27,12 @@ func Login(t *testing.T, username, password string) models.LoginOkResponse {
 	defer loginRawResponse.Body.Close()
 
 	respArray, errResponse := io.ReadAll(loginRawResponse.Body)
-	require.NoError(t, errResponse)
+	require.NoError(t, errResponse, "авторизация: не удалось прочитать тело ответа POST /auth/login")
 	require.Equalf(t, http.StatusOK, loginRawResponse.StatusCode, "ошибка авторизации: HTTP %d, ответ: %s", loginRawResponse.StatusCode, respArray)
 
 	loginResponse := models.LoginOkResponse{}
 	err := json.Unmarshal(respArray, &loginResponse)
-	require.NoError(t, err)
+	require.NoError(t, err, "авторизация: ответ POST /auth/login должен быть корректным JSON")
 
 	return loginResponse
 }

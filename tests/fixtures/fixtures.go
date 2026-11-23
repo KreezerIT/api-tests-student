@@ -19,7 +19,7 @@ func Login(t *testing.T, loginKey, passwordKey string) authmodels.LoginOkRespons
 	t.Helper()
 	base.SetupSuite()
 	result := auth.Login(t, os.Getenv(loginKey), os.Getenv(passwordKey))
-	require.NotEmpty(t, result.Token, "авторизация не вернула токен")
+	require.NotEmpty(t, result.Token, "подготовка пользователя из %s: в ответе авторизации отсутствует token", loginKey)
 	return result
 }
 
@@ -36,5 +36,5 @@ func Fields() map[string]string {
 // PhotoPath возвращает путь к тестовой фотографии
 func PhotoPath() string {
 	_, file, _, _ := runtime.Caller(0)
-	return filepath.Join(filepath.Dir(file), "Валерон.png")
+	return filepath.Join(filepath.Dir(file), "..", "scenarios", "advertisement", "images", "Валерон.png")
 }
